@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Cost Calculator | Calculate Your Meeting Expenses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.8;
+        }
+        
+        .calculator {
+            padding: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        
+        .cost-display {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .breakdown {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 Meeting Cost Calculator</h1>
+            <p>Discover the true cost of your meetings</p>
+        </div>
+        
+        <div class="calculator">
+            <div class="input-group">
+                <label for="duration">🕐 Meeting Duration (minutes)</label>
+                <input type="number" id="duration" value="30" min="1">
+            </div>
+            
+            <div class="input-group">
+                <label for="attendees">👥 Number of Attendees</label>
+                <input type="number" id="attendees" value="5" min="1">
+            </div>
+            
+            <div class="input-group">
+                <label for="salary">💰 Average Annual Salary per Person</label>
+                <select id="salary">
+                    <option value="40000">$40,000 (Entry Level)</option>
+                    <option value="60000">$60,000 (Junior)</option>
+                    <option value="80000" selected>$80,000 (Mid Level)</option>
+                    <option value="100000">$100,000 (Senior)</option>
+                    <option value="120000">$120,000 (Lead)</option>
+                    <option value="150000">$150,000 (Manager)</option>
+                    <option value="200000">$200,000 (Director)</option>
+                </select>
+            </div>
+            
+            <button onclick="calculateCost()">Calculate Meeting Cost</button>
+            
+            <div id="result" class="result">
+                <h3>Meeting Cost Analysis</h3>
+                <div class="cost-display" id="totalCost">$0.00</div>
+                
+                <div class="breakdown">
+                    <div class="breakdown-item">
+                        <span>Hourly rate per person:</span>
+                        <span id="hourlyRate">$0.00</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Cost per person:</span>
+                        <span id="costPerPerson">$0.00</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Total meeting hours:</span>
+                        <span id="totalHours">0</span>
+                    </div>
+                    <div class="breakdown-item" style="font-weight: bold; color: #2c3e50;">
+                        <span>Total meeting cost:</span>
+                        <span id="finalCost">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Use this tool to make your meetings more productive and cost-effective!</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateCost() {
+            // Get input values
+            const duration = parseFloat(document.getElementById('duration').value);
+            const attendees = parseFloat(document.getElementById('attendees').value);
+            const salary = parseFloat(document.getElementById('salary').value);
+            
+            // Calculations
+            const workWeeksPerYear = 52;
+            const workHoursPerWeek = 40;
+            const yearlyWorkHours = workWeeksPerYear * workHoursPerWeek;
+            
+            const hourlyRate = salary / yearlyWorkHours;
+            const meetingHours = duration / 60;
+            const costPerPerson = hourlyRate * meetingHours;
+            const totalCost = costPerPerson * attendees;
+            
+            // Display results
+            document.getElementById('hourlyRate').textContent = `$${hourlyRate.toFixed(2)}`;
+            document.getElementById('costPerPerson').textContent = `$${costPerPerson.toFixed(2)}`;
+            document.getElementById('totalHours').textContent = meetingHours.toFixed(2);
+            document.getElementById('finalCost').textContent = `$${totalCost.toFixed(2)}`;
+            document.getElementById('totalCost').textContent = `$${totalCost.toFixed(2)}`;
+            
+            // Show result section
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Calculate on page load with default values
+        window.onload = calculateCost;
+    </script>
+</body>
+</html>
